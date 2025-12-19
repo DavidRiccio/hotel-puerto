@@ -6,5 +6,5 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "guest")
 public class GuestEntity {
-    // TODO: @Id + campos + relaciones
+    
 }
