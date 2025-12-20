@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>es.david.proyecto</groupId>
+  <groupId>org.docencia.hotel</groupId>
   <artifactId>hotel-puerto</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>hotel-puerto</name>
