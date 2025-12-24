@@ -6,9 +6,11 @@ import java.util.Optional;
 import org.docencia.hotel.domain.model.Guest;
 import org.docencia.hotel.domain.model.GuestPreferences;
 import org.docencia.hotel.mapper.jpa.GuestMapper;
+import org.docencia.hotel.mapper.nosql.GuestPreferencesMapper;
 import org.docencia.hotel.persistence.jpa.entity.GuestEntity;
-import org.docencia.hotel.persistence.jpa.entity.HotelEntity;
+import org.docencia.hotel.persistence.nosql.document.GuestPreferencesDocument;
 import org.docencia.hotel.persistence.repository.jpa.GuestJpaRepository;
+import org.docencia.hotel.persistence.repository.nosql.GuestPreferencesRepository;
 import org.docencia.hotel.service.api.GuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,16 @@ import org.springframework.stereotype.Service;
 public class GuestServiceImpl implements GuestService {
 
     @Autowired
-    GuestJpaRepository guestJpaRepository;
+    private GuestJpaRepository guestJpaRepository;
 
     @Autowired
-    GuestMapper guestMapper;
+    private GuestPreferencesRepository guestPreferencesRepository;
+
+    @Autowired
+    private GuestMapper guestMapper;
+
+    @Autowired
+    private GuestPreferencesMapper guestPreferencesMapper;
 
     @Override
     public List<Guest> findAll() {
@@ -29,8 +37,7 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public Optional<Guest> findById(String id) {
-        return guestJpaRepository.findById(id)
-                .map(guestMapper::toDomain);
+        return guestJpaRepository.findById(id).map(guestMapper::toDomain);
     }
 
     @Override
@@ -42,13 +49,16 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public Guest update(String id, Guest guest) {
-        GuestEntity guest2 = guestJpaRepository.findById(id).orElse(null);
-        guest2.setEmail(guest.getEmail());
-        guest2.setFull_name(guest.getFull_name());
-        guest2.setPhone(guest.getPhone());
-        guest2.setPreferencesId(guest.getPreferencesId());
-        guestJpaRepository.save(guest2);
-        return guestMapper.toDomain(guest2);
+        GuestEntity guestEntity = guestJpaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Guest not found"));
+
+        guestEntity.setFull_name(guest.getFull_name());
+        guestEntity.setEmail(guest.getEmail());
+        guestEntity.setPhone(guest.getPhone());
+        guestEntity.setPreferencesId(guest.getPreferencesId());
+
+        GuestEntity updated = guestJpaRepository.save(guestEntity);
+        return guestMapper.toDomain(updated);
     }
 
     @Override
@@ -58,18 +68,30 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public Optional<Guest> findByEmail(String email) {
-        return guestJpaRepository.findByEmail(email).map(guestMapper :: toDomain);
+        return guestJpaRepository.findByEmail(email).map(guestMapper::toDomain);
     }
 
     @Override
     public GuestPreferences savePreferences(String guestId, GuestPreferences preferences) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'savePreferences'");
+
+        if (!guestJpaRepository.existsById(guestId)) {
+            throw new RuntimeException("Guest not found");
+        }
+
+        preferences.setGuestId(guestId);
+
+        GuestPreferencesDocument document = guestPreferencesMapper.toDocument(preferences);
+        GuestPreferencesDocument saved = guestPreferencesRepository.save(document);
+
+        GuestEntity guestEntity = guestJpaRepository.findById(guestId).orElseThrow(() -> new RuntimeException("Guest not found"));
+        guestEntity.setPreferencesId(saved.getId());
+        guestJpaRepository.save(guestEntity);
+
+        return guestPreferencesMapper.toDomain(saved);
     }
 
     @Override
     public Optional<GuestPreferences> findPreferencesByGuestId(String guestId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findPreferencesByGuestId'");
+        return guestPreferencesRepository.findByGuestId(guestId).map(guestPreferencesMapper::toDomain);
     }
 }
