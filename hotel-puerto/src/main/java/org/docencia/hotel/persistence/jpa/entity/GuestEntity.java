@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 public class GuestEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     @Column(name = "full_name")
     String full_name;
