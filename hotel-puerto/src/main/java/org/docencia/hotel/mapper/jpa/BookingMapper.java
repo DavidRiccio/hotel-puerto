@@ -13,7 +13,7 @@ public interface BookingMapper {
 
     /**
      * Transforma de BookingEntity a Booking
-     * 
+     *
      * @param entity BookingEntity
      * @return Booking
      */
@@ -23,27 +23,19 @@ public interface BookingMapper {
 
     /**
      * Transforma de Booking a BookingEntity
-     * 
+     *
      * @param domain Booking
      * @return BookingEntity
      */
-    @Mapping(source = "roomId", target = "room.id")
-    @Mapping(source = "guestId", target = "guest.id")
+    @Mapping(target = "room", ignore = true)
+    @Mapping(target = "guest", ignore = true)
     BookingEntity toEntity(Booking domain);
 
     /**
      * Transforma una lista de BookingEntity a una de Booking
-     * 
+     *
      * @param entities lista de BookingEntity
      * @return lista de Booking
      */
     List<Booking> toDomainList(List<BookingEntity> entities);
-
-    /**
-     * Transforma una lista de Booking a una de BookingEntity
-     * 
-     * @param domains lista de Booking
-     * @return lista de BookingEntity
-     */
-    List<BookingEntity> toEntityList(List<Booking> domains);
 }

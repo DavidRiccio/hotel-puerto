@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 public class HotelEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
     @Column(name = "name")

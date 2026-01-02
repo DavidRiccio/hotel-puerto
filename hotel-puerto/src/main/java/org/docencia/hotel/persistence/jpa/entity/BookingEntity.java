@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class BookingEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
     @ManyToOne
