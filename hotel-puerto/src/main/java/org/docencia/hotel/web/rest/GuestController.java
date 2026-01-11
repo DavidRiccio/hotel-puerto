@@ -2,6 +2,7 @@ package org.docencia.hotel.web.rest;
 
 import org.docencia.hotel.domain.api.GuestDomain;
 import org.docencia.hotel.domain.model.Guest;
+import org.docencia.hotel.domain.model.GuestPreferences;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -139,4 +140,46 @@ public class GuestController {
         guestDomain.deleteGuest(id);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+ * GET /api/guests/{id}/preferences
+ * Obtiene las preferencias de un guest desde MongoDB
+ */
+@GetMapping("/{id}/preferences")
+public ResponseEntity<GuestPreferences> getGuestPreferences(@PathVariable String id) {
+    GuestPreferences preferences = guestDomain.getGuestPreferences(id).orElse(null);
+    
+    if (preferences == null) {
+        return ResponseEntity.notFound().build();
+    }
+    
+    return ResponseEntity.ok(preferences);
+}
+
+/**
+ * POST /api/guests/{guestId}/preferences
+ * Crea preferencias para un guest en MongoDB
+ */
+@PostMapping("/{guestId}/preferences")
+public ResponseEntity<GuestPreferences> createGuestPreferences(
+        @PathVariable String guestId, 
+        @RequestBody GuestPreferences preferences) {
+    
+    GuestPreferences saved = guestDomain.saveGuestPreferences(guestId, preferences);
+    return ResponseEntity.ok(saved);
+}
+
+/**
+ * PUT /api/guests/{guestId}/preferences
+ * Actualiza las preferencias de un guest en MongoDB
+ */
+@PutMapping("/{guestId}/preferences")
+public ResponseEntity<GuestPreferences> updateGuestPreferences(
+        @PathVariable String guestId,
+        @RequestBody GuestPreferences preferences) {
+    
+    GuestPreferences updated = guestDomain.saveGuestPreferences(guestId, preferences);
+    return ResponseEntity.ok(updated);
+}
+
 }
