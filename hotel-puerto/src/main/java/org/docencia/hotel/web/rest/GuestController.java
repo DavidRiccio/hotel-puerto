@@ -141,10 +141,6 @@ public class GuestController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
- * GET /api/guests/{id}/preferences
- * Obtiene las preferencias de un guest desde MongoDB
- */
 @GetMapping("/{id}/preferences")
 public ResponseEntity<GuestPreferences> getGuestPreferences(@PathVariable String id) {
     GuestPreferences preferences = guestDomain.getGuestPreferences(id).orElse(null);
@@ -156,10 +152,6 @@ public ResponseEntity<GuestPreferences> getGuestPreferences(@PathVariable String
     return ResponseEntity.ok(preferences);
 }
 
-/**
- * POST /api/guests/{guestId}/preferences
- * Crea preferencias para un guest en MongoDB
- */
 @PostMapping("/{guestId}/preferences")
 public ResponseEntity<GuestPreferences> createGuestPreferences(
         @PathVariable String guestId, 
@@ -168,11 +160,6 @@ public ResponseEntity<GuestPreferences> createGuestPreferences(
     GuestPreferences saved = guestDomain.saveGuestPreferences(guestId, preferences);
     return ResponseEntity.ok(saved);
 }
-
-/**
- * PUT /api/guests/{guestId}/preferences
- * Actualiza las preferencias de un guest en MongoDB
- */
 @PutMapping("/{guestId}/preferences")
 public ResponseEntity<GuestPreferences> updateGuestPreferences(
         @PathVariable String guestId,
